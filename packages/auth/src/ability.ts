@@ -4,17 +4,14 @@ import { createMongoAbility } from '@casl/ability'
 import type { Project } from './project.js'
 import type { User } from './roles.js'
 
-type AppSubjects =
-  | 'all'
-  | 'User'
-  | (User & ForcedSubject<'User'>)
-  | 'Project'
-  | (Project & ForcedSubject<'Project'>)
+type UserSubject = 'User' | (User & ForcedSubject<'User'>)
+type ProjectSubject = 'Project' | (Project & ForcedSubject<'Project'>)
 
-type AppAbilities = [
-  'manage' | 'invite' | 'create' | 'delete' | 'configure',
-  AppSubjects,
-]
+// invite is restricted to User only — Project has no invite concept
+type AppAbilities =
+  | ['manage', UserSubject | ProjectSubject | 'all']
+  | ['invite', UserSubject]
+  | ['create' | 'delete' | 'configure', ProjectSubject]
 
 export type AppAbility = MongoAbility<AppAbilities>
 export const createAppAbility = createMongoAbility as CreateAbility<AppAbility>
