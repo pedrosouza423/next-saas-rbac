@@ -2,7 +2,7 @@ import { AbilityBuilder } from '@casl/ability'
 
 import { createAppAbility } from './ability.js'
 import { permissions } from './permissions.js'
-import { User } from './roles.js'
+import type { User } from './roles.js'
 
 export * from './ability.js'
 export * from './project.js'
