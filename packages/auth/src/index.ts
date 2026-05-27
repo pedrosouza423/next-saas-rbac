@@ -5,6 +5,7 @@ import type { User } from './models/user.js'
 import { permissions } from './permissions.js'
 
 export * from './ability.js'
+export * from './assert-can.js'
 export * from './models/organization.js'
 export * from './models/project.js'
 export * from './models/user.js'
