@@ -12,9 +12,10 @@ export const permissions: Record<Role, PermissionsByRole> = {
   ADMIN(_user, { can }) {
     can('manage', 'all')
   },
-  MEMBER(user, { can, cannot }) {
+  MEMBER(_user, { can }) {
     can('invite', 'User')
-    cannot('delete', 'User')
-    can('update', 'User', { id: user.id })
+    can('create', 'Project')
+    can('delete', 'Project')
+    can('configure', 'Project')
   },
 }

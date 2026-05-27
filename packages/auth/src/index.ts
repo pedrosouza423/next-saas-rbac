@@ -5,12 +5,17 @@ import { permissions } from './permissions.js'
 import { User } from './roles.js'
 
 export * from './ability.js'
+export * from './project.js'
 export * from './roles.js'
 
 export function defineAbilityFor(user: User) {
   const builder = new AbilityBuilder(createAppAbility)
 
-  permissions[user.role](user, builder)
+  if (typeof permissions[user.role] === 'function') {
+    permissions[user.role](user, builder)
+  } else {
+    throw new Error(`${user.role} not found`)
+  }
 
   return builder.build()
 }
