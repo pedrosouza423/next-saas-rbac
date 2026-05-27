@@ -7,12 +7,8 @@ import type { User } from './roles.js'
 type UserSubject = 'User' | (User & ForcedSubject<'User'>)
 type ProjectSubject = 'Project' | (Project & ForcedSubject<'Project'>)
 
-// invite appears on both subjects so ADMIN can use cannot('invite', 'Project')
-// to override manage-all at runtime. The restriction is enforced by permissions,
-// not by narrowing this type.
 type AppAbilities =
-  | ['manage', UserSubject | ProjectSubject | 'all']
-  | ['invite', UserSubject | ProjectSubject]
+  | ['invite', UserSubject]
   | ['create' | 'delete' | 'configure', ProjectSubject]
 
 export type AppAbility = MongoAbility<AppAbilities>
