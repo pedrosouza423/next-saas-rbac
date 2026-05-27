@@ -1,6 +1,9 @@
-export type Role = 'ADMIN' | 'MEMBER'
+import { z } from 'zod'
 
-export interface User {
-  id: string
-  role: Role
-}
+export const roleSchema = z.union([
+  z.literal('ADMIN'),
+  z.literal('MEMBER'),
+  z.literal('BILLING'),
+])
+
+export type Role = z.infer<typeof roleSchema>
