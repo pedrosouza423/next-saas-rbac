@@ -1,3 +1,4 @@
+// CSS imports first — required for correct Tailwind v4 cascade order
 import './globals.css'
 
 import type { Metadata } from 'next'
