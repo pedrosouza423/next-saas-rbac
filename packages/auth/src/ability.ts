@@ -1,15 +1,19 @@
-import type { CreateAbility, ForcedSubject, MongoAbility } from '@casl/ability'
+import type { CreateAbility, MongoAbility } from '@casl/ability'
 import { createMongoAbility } from '@casl/ability'
 
-import type { Project } from './project.js'
-import type { User } from './roles.js'
-
-type UserSubject = 'User' | (User & ForcedSubject<'User'>)
-type ProjectSubject = 'Project' | (Project & ForcedSubject<'Project'>)
+import type { BillingSubject } from './subjects/billing.js'
+import type { InviteSubject } from './subjects/invite.js'
+import type { OrganizationSubject } from './subjects/organization.js'
+import type { ProjectSubject } from './subjects/project.js'
+import type { UserSubject } from './subjects/user.js'
 
 type AppAbilities =
-  | ['invite', UserSubject]
-  | ['create' | 'delete' | 'configure', ProjectSubject]
+  | UserSubject
+  | ProjectSubject
+  | OrganizationSubject
+  | InviteSubject
+  | BillingSubject
+  | ['manage', 'all']
 
 export type AppAbility = MongoAbility<AppAbilities>
 export const createAppAbility = createMongoAbility as CreateAbility<AppAbility>
