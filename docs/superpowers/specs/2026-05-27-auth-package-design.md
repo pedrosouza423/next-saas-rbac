@@ -1,95 +1,102 @@
 # Design: `@saas/auth` Package
 
 **Date:** 2026-05-27
-**Status:** Approved
+**Status:** Implemented — `feat/auth-package`, PR #6
 
 ## Summary
 
-Create a new private workspace package `@saas/auth` in `packages/auth/` to house RBAC (Role-Based Access Control) and ABAC (Attribute-Based Access Control) logic for the SaaS platform. The package is a pure TypeScript library — no authentication, no session management — with ESLint and TypeScript configured following monorepo conventions.
+Private workspace package `@saas/auth` in `packages/auth/` that centralizes RBAC/ABAC
+authorization using **CASL** (`@casl/ability` v6). Pure TypeScript library — no authentication,
+no session management. Companion app `apps/api` provides a Node test backend.
 
 ## Scope
 
-- **In scope:** Package scaffold with tooling (ESLint, TypeScript), `src/` structure, stub entry point
-- **Out of scope:** RBAC/ABAC implementation logic, authentication, session handling, Next.js middleware helpers, external auth providers
+- **In scope:** RBAC role map (ADMIN/MEMBER), typed subjects (User, Project), `defineAbilityFor`, `apps/api` test backend
+- **Out of scope:** Authentication, session handling, Next.js middleware helpers, external auth providers
 
 ## Package Structure
 
 ```
 packages/auth/
 ├── src/
-│   └── index.ts          # public exports
-├── eslint.config.js      # flat config, extends @saas/eslint-config/base
+│   ├── roles.ts        # Role type + User interface
+│   ├── project.ts      # Project interface
+│   ├── ability.ts      # AppAbility (union-of-tuples) + createAppAbility
+│   ├── permissions.ts  # role → permissions map
+│   └── index.ts        # defineAbilityFor + re-exports
+├── eslint.config.js    # flat config, extends @saas/eslint-config/base
 ├── package.json
+└── tsconfig.json
+
+apps/api/
+├── src/
+│   └── index.ts        # manual test of MEMBER and ADMIN abilities
+├── eslint.config.js    # flat config, extends @saas/eslint-config/node
+├── package.json        # dev: tsx watch src/index.ts
 └── tsconfig.json
 ```
 
-## Files
+## Permission Matrix
 
-### `package.json`
+| Action | Subject | ADMIN | MEMBER |
+|--------|---------|-------|--------|
+| `invite` | `User` | ✅ | ✅ |
+| `invite` | `Project` | ❌ type error | ❌ type error |
+| `create` | `Project` | ✅ | ❌ |
+| `delete` | `Project` | ✅ | ❌ |
+| `configure` | `Project` | ✅ | ❌ |
 
-```json
-{
-  "name": "@saas/auth",
-  "version": "0.0.0",
-  "private": true,
-  "type": "module",
-  "exports": { ".": "./src/index.ts" },
-  "scripts": {
-    "lint": "eslint . --max-warnings 0",
-    "check-types": "tsc --noEmit"
-  },
-  "devDependencies": {
-    "@saas/eslint-config": "workspace:*",
-    "@saas/typescript-config": "workspace:*",
-    "@types/node": "^22.15.3",
-    "eslint": "^9.39.1",
-    "typescript": "5.9.2"
-  }
-}
+## Key Files
+
+### `src/ability.ts`
+
+```ts
+type AppAbilities =
+  | ['invite', UserSubject]
+  | ['create' | 'delete' | 'configure', ProjectSubject]
 ```
 
-- `private: true` — not publishable
-- `type: "module"` — ESM, consistent with the other packages
-- `exports` — single entry point via source file (no build step, same pattern as `@saas/ui`)
-- No `dependencies` yet — RBAC/ABAC deps added when implementation begins
-- Prettier runs from root (`format` script covers `**/*.ts`), no per-package config needed
+Union-of-tuples restricts `invite` to `UserSubject` only. `ability.can('invite', 'Project')` is a
+**compile-time TypeScript error**.
 
-### `eslint.config.js`
+### `src/permissions.ts`
 
-```js
-import { config } from "@saas/eslint-config/base";
-export default config;
+```ts
+ADMIN(_user, { can }) {
+  can('invite', 'User')
+  can('create', 'Project')
+  can('delete', 'Project')
+  can('configure', 'Project')
+},
+MEMBER(_user, { can }) {
+  can('invite', 'User')
+},
 ```
-
-Uses `base` (not `react-internal` or `next-js`) since this is a framework-agnostic library.
-
-### `tsconfig.json`
-
-```json
-{
-  "extends": "@saas/typescript-config/base.json",
-  "compilerOptions": { "rootDir": "src" },
-  "include": ["src"],
-  "exclude": ["node_modules"]
-}
-```
-
-Extends `base.json` (ES2022, NodeNext resolution, strict). No `outDir` — source is consumed directly within the workspace without a compile step.
 
 ### `src/index.ts`
 
 ```ts
-export {};
+export function defineAbilityFor(user: User) {
+  const builder = new AbilityBuilder(createAppAbility)
+  if (typeof permissions[user.role] === 'function') {
+    permissions[user.role](user, builder)
+  } else {
+    throw new Error(`${user.role} not found`)
+  }
+  return builder.build()
+}
 ```
-
-Empty stub. RBAC/ABAC exports added in subsequent implementation.
 
 ## Design Decisions
 
 | Decision | Choice | Reason |
 |---|---|---|
-| `src/` directory vs flat | `src/` | Scales cleanly when splitting `rbac.ts` and `abac.ts` |
-| Subpath exports | Single `.` entry | Premature to split before implementation exists |
-| Build step | None | Matches `@saas/ui` pattern — source consumed directly in workspace |
-| ESLint config | `base` | Library is framework-agnostic |
-| Prettier | Root-level only | Root `format` script already covers all packages |
+| Authorization engine | CASL `@casl/ability` v6 | Isomorphic, TypeScript-first, RBAC + ABAC |
+| `AppAbilities` format | Union of tuples | Restricts `invite` to `User` only at the type level |
+| No `manage all` for ADMIN | Explicit permissions | `manage all` wildcard bypasses type restrictions at CASL runtime |
+| `invite` on `Project` | Forbidden by type | Semantically nonsensical — you invite a User, not a Project |
+| Build step | None | Source consumed directly via `exports` (same as `@saas/ui`) |
+| ESLint config | `base` for auth, `node` for api | Auth is framework-agnostic; API is Node-only |
+| Prettier | Root-level only | Root `format` script covers all packages |
+| `noEmit: true` | Added to auth tsconfig | Prevents tsc from emitting into `src/` if run outside `check-types` |
+| `import type` | Used in permissions/index | `isolatedModules: true` requires it for type-only imports |
