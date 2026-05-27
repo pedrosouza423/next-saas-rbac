@@ -3,5 +3,5 @@ export default function Home() {
     <main>
       <h1>next-saas-rbac</h1>
     </main>
-  );
+  )
 }
