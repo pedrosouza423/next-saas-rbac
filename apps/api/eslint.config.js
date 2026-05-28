@@ -1,3 +1,3 @@
 import { nodeConfig } from '@saas/eslint-config/node'
 
-export default nodeConfig
+export default [{ ignores: ['generated/**'] }, ...nodeConfig]
