@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
+
 import { defineConfig } from 'prisma/config'
 
 // Prisma 7 skips automatic .env loading when prisma.config.ts is present.
@@ -14,7 +15,9 @@ try {
     const val = line.slice(eqIdx + 1).trim().replace(/^["']|["']$/g, '')
     if (key && !process.env[key]) process.env[key] = val
   }
-} catch {}
+} catch {
+  // .env not found; DATABASE_URL must be set in the environment
+}
 
 export default defineConfig({
   datasource: {
