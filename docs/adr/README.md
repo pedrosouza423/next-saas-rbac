@@ -52,7 +52,7 @@ contrário, ou em onboarding pra explicar uma vez só).
 | `0001` | pnpm + Turborepo (vs npm/yarn workspaces, vs nx, vs single-repo) | Alguém propor migrar para nx | [README.md](../../README.md), [turbo.json](../../turbo.json) |
 | `0002` | Source-only package exports (sem build step em `@saas/ui` e `@saas/auth`) | Alguém propor adicionar `tsup`/`bun build` | [packages/ui/package.json](../../packages/ui/package.json), [packages/auth/package.json](../../packages/auth/package.json) |
 | `0003` | Fastify separado (vs Next.js API routes / route handlers) | Discussão de simplicidade vs separação | [apps/api/src/server.ts](../../apps/api/src/server.ts) |
-| `0004` | ADMIN usa `manage all` + `cannot/can` overrides (decisão revisada do spec original) | Discussão sobre type-safety vs manutenibilidade | [packages/auth/src/permissions.ts](../../packages/auth/src/permissions.ts), [architecture/rbac-permissions.md](../architecture/rbac-permissions.md) |
+| `0004` | ADMIN usa `manage all` + `cannot/can` overrides (decisão revisada do spec original) | Quando alguém questionar o uso de `manage all` e propuser voltar a permissões explícitas | [packages/auth/src/permissions.ts](../../packages/auth/src/permissions.ts), [architecture/rbac-permissions.md](../architecture/rbac-permissions.md) |
 | `0005` | Prisma 7 com `@prisma/adapter-pg` (vs Prisma 6 com binary engine, vs Drizzle) | Reset de complexity budget | [apps/api/prisma.config.ts](../../apps/api/prisma.config.ts), [specs/2026-05-28-api-fastify-prisma-setup.md](../specs/2026-05-28-api-fastify-prisma-setup.md) |
 
 ## Related

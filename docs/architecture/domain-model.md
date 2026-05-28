@@ -93,6 +93,7 @@ A unidade de **tenancy** principal. Cada Organization tem um owner e zero ou mai
 | `slug` | string | **unique** — identificador URL-friendly |
 | `domain` | string? | **unique** — domínio de email pra auto-attach |
 | `shouldAttachUsersByDomain` | bool | se `true`, usuários com email `@domain` viram member automaticamente |
+| `avatarUrl` | string? | avatar da organização |
 | `ownerId` | FK → User | dono atual (transferível) |
 
 ### Project
@@ -104,6 +105,7 @@ da Org) — útil para delegação dentro do tenant.
 |---|---|---|
 | `slug` | string | **unique globally** (não só por Org) |
 | `description` | string | obrigatório |
+| `avatarUrl` | string? | avatar do projeto |
 | `organizationId` | FK → Organization | tenant onde vive |
 | `ownerId` | FK → User | dono do projeto |
 

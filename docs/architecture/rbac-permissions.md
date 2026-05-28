@@ -115,10 +115,20 @@ if (ability.can('update', { __typename: 'Project', ownerId: user.id })) {
 > precisa ter `__typename` setado. Isso é feito via `detectSubjectType` em
 > `defineAbilityFor` (veja [`index.ts`](../../packages/auth/src/index.ts) linha 29).
 
-### Assertion helper
+### Typed wrappers for ownership-conditioned actions
 
-Use `assertCan` (em [`assert-can.ts`](../../packages/auth/src/assert-can.ts)) quando quiser
-short-circuit com throw em vez de if/else.
+Use [`assert-can.ts`](../../packages/auth/src/assert-can.ts) quando precisar checar actions
+que possuem condições de ownership (`ownerId`). O módulo exporta dois helpers:
+
+```ts
+projectCan(ability, 'update' | 'delete', projectInstance)
+organizationCan(ability, 'update' | 'transfer_ownership', orgInstance)
+```
+
+**Por que existem:** CASL silenciosamente ignora condições (`ownerId: { $eq: user.id }`) quando
+o subject é passado como string: `ability.can('delete', 'Project')` retorna `true` mesmo que o
+user não seja dono. Os helpers acima **forçam no tipo** que o caller passe uma instância (objeto
+com `__typename` + `ownerId`), tornando o bypass um erro de compilação em vez de bug silencioso.
 
 ## Type safety
 

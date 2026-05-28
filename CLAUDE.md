@@ -13,7 +13,7 @@ pnpm dev
 
 # Dev (single app)
 pnpm --filter=web dev       # web on :3000
-pnpm --filter=docs dev      # docs on default port
+pnpm --filter=docs dev      # docs on :3001
 
 # Build
 pnpm build
