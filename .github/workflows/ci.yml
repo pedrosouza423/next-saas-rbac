@@ -22,8 +22,9 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      - run: pnpm --filter api db:generate
+
       - run: pnpm --filter @saas/auth check-types
       - run: pnpm --filter api check-types
       - run: pnpm --filter @saas/auth lint
       - run: pnpm --filter api lint
-      - run: pnpm --filter api exec tsx src/index.ts
