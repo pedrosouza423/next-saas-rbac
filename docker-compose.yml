@@ -1,15 +1,16 @@
 services:
   postgres:
-    image: bitnami/postgresql:16
+    image: postgres:16
     container_name: next-saas-pg
     ports:
-      - '5432:5432'
+      - '5433:5432'
     environment:
-      POSTGRESQL_USERNAME: docker
-      POSTGRESQL_PASSWORD: docker
-      POSTGRESQL_DATABASE: next-saas
+      POSTGRES_USER: docker
+      POSTGRES_PASSWORD: docker
+      POSTGRES_DB: next-saas
+      POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
-      - next_saas_pg_data:/bitnami/postgresql
+      - next_saas_pg_data:/var/lib/postgresql/data
 
 volumes:
   next_saas_pg_data:

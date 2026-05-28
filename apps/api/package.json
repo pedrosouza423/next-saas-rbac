@@ -13,8 +13,8 @@
   },
   "dependencies": {
     "@fastify/cors": "^10.0.2",
-    "@prisma/adapter-pg": "^6.9.0",
-    "@prisma/client": "^6.9.0",
+    "@prisma/adapter-pg": "^7.0.0",
+    "@prisma/client": "^7.0.0",
     "@saas/auth": "workspace:*",
     "fastify": "^5.4.0",
     "fastify-type-provider-zod": "^4.0.2",
@@ -26,7 +26,7 @@
     "@saas/typescript-config": "workspace:*",
     "@types/node": "^22.15.3",
     "@types/pg": "^8.11.10",
-    "prisma": "^6.9.0",
+    "prisma": "^7.0.0",
     "tsx": "^4.20.6",
     "typescript": "5.9.2"
   }
