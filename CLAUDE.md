@@ -13,7 +13,7 @@ pnpm dev
 
 # Dev (single app)
 pnpm --filter=web dev       # web on :3000
-pnpm --filter=docs dev      # docs on default port
+pnpm --filter=docs dev      # docs on :3001
 
 # Build
 pnpm build
@@ -36,8 +36,10 @@ This is a **pnpm + Turborepo monorepo** for a SaaS app with RBAC (role-based acc
 ```
 apps/
   web/    # Main SaaS app — Next.js 16, React 19, port 3000
-  docs/   # Docs site — Next.js 16, React 19
+  api/    # REST API — Fastify 5, Prisma 7, port 3333
+  docs/   # Docs site — Next.js 16, React 19, port 3001
 packages/
+  auth/               # @saas/auth — CASL-based RBAC library
   ui/                 # @saas/ui — shared React component library
   eslint-config/      # @saas/eslint-config — shared ESLint flat configs
   typescript-config/  # @saas/typescript-config — shared tsconfig.json bases
@@ -52,3 +54,7 @@ packages/
 **TypeScript** — `apps/web` runs `next typegen` before `tsc --noEmit` to generate route types. Shared tsconfig bases live in `@saas/typescript-config`.
 
 **Turbo task graph** — `build` and `check-types` depend on `^build`/`^check-types` (dependencies run first). `dev` is persistent and uncached. Pass `--filter=<app>` to Turbo for single-package operations.
+
+## Documentation
+
+In-depth architecture, domain model, RBAC matrix, and local-dev setup live in [docs/](docs/). Start at [docs/README.md](docs/README.md) for navigation. The file you're reading is the operational pointer — use `docs/` as the durable reference library.

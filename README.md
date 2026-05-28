@@ -8,12 +8,13 @@ Monorepo for studying and building a SaaS application with Next.js, a Fastify RE
 |-----|-------------|------|
 | `apps/web` | Main SaaS application (Next.js) | 3000 |
 | `apps/api` | REST API (Fastify + Prisma) | 3333 |
-| `apps/docs` | Documentation site (Next.js) | — |
+| `apps/docs` | Documentation site (Next.js) | 3001 |
 
 ## Packages
 
 | Package | Description |
 |---------|-------------|
+| `packages/auth` | `@saas/auth` — CASL-based RBAC library |
 | `packages/ui` | `@saas/ui` — shared React component library |
 | `packages/eslint-config` | `@saas/eslint-config` — shared ESLint flat configs |
 | `packages/typescript-config` | `@saas/typescript-config` — shared tsconfig bases |
@@ -112,3 +113,7 @@ docker-compose.yml  # Postgres 16
 | `DATABASE_URL` | PostgreSQL connection string | `postgresql://docker:docker@localhost:5433/next-saas?schema=public&sslmode=disable` |
 | `PORT` | API server port | `3333` |
 | `NODE_ENV` | Runtime environment | `development` |
+
+## Documentation
+
+In-depth docs (architecture, domain model, RBAC matrix, ADRs, specs) live in [docs/](docs/). Start at [docs/README.md](docs/README.md).

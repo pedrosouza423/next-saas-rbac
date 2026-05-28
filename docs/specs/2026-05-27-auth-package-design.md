@@ -38,6 +38,10 @@ apps/api/
 
 ## Permission Matrix
 
+> **Evergreen reference:** esta tabela é um snapshot do design em 2026-05-27 (PR #6). A matriz
+> autoritativa e completa (com Organization, Invite, Billing e BILLING role) vive em
+> [docs/architecture/rbac-permissions.md](../architecture/rbac-permissions.md).
+
 | Action | Subject | ADMIN | MEMBER |
 |--------|---------|-------|--------|
 | `invite` | `User` | ✅ | ✅ |

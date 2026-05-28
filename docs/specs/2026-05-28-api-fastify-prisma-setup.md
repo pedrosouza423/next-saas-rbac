@@ -39,6 +39,10 @@ docker-compose.yml          # raiz do monorepo — Postgres 16
 
 ## Domain Schema
 
+> **Evergreen reference:** este spec é um snapshot do design em 2026-05-28. O modelo de domínio
+> autoritativo (com ERD atualizado) vive em
+> [docs/architecture/domain-model.md](../architecture/domain-model.md).
+
 ### Enums
 
 | Enum | Values |
