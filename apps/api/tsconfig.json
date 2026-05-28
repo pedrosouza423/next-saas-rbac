@@ -1,10 +1,10 @@
 {
   "extends": "@saas/typescript-config/base.json",
   "compilerOptions": {
-    "rootDir": "src",
+    "rootDir": ".",
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["src"],
+  "include": ["src", "generated"],
   "exclude": ["node_modules"]
 }
