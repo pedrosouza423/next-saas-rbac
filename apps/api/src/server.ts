@@ -8,12 +8,14 @@ import {
 import { z } from 'zod/v4'
 
 import { env } from './env.js'
+import { errorHandler } from './http/error-handler.js'
 import { prisma } from './lib/prisma.js'
 
 const app = fastify({ logger: true }).withTypeProvider<ZodTypeProvider>()
 
 app.setValidatorCompiler(validatorCompiler)
 app.setSerializerCompiler(serializerCompiler)
+errorHandler(app)
 
 await app.register(fastifyCors, { origin: true })
 
