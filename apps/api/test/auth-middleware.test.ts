@@ -12,6 +12,10 @@ vi.mock('../src/lib/prisma.js', () => ({
 }))
 
 describe('Auth Middleware', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
   describe('getCurrentUserId', () => {
     it('returns userId from valid JWT', async () => {
       const app = await createTestApp()
@@ -82,10 +86,6 @@ describe('Auth Middleware', () => {
   })
 
   describe('getUserMembership', () => {
-    beforeEach(() => {
-      vi.clearAllMocks()
-    })
-
     it('returns membership and organization when member exists', async () => {
       const { prisma } = await import('../src/lib/prisma.js')
       const mockMember = {

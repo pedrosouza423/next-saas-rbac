@@ -36,6 +36,8 @@ describe('Error Handler', () => {
     expect(response.statusCode).toBe(400)
     const body = response.json()
     expect(body.message).toBe('Validation error.')
+    // FST_ERR_VALIDATION path (fastify-type-provider-zod v4 + zod v4 compat) does not populate errors field
+    expect(body.errors).toBeUndefined()
   })
 
   it('returns 400 for BadRequestError', async () => {
