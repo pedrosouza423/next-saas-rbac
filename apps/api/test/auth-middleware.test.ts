@@ -105,7 +105,9 @@ describe('Auth Middleware', () => {
           updatedAt: new Date(),
         },
       }
-      vi.mocked(prisma.member.findFirst).mockResolvedValue(mockMember as any)
+      vi.mocked(prisma.member.findFirst).mockResolvedValue(
+        mockMember as Awaited<ReturnType<typeof prisma.member.findFirst>>,
+      )
 
       const app = await createTestApp()
 

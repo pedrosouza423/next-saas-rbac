@@ -2,8 +2,8 @@ import fastify from 'fastify'
 import {
   serializerCompiler,
   validatorCompiler,
+  type ZodTypeProvider,
 } from 'fastify-type-provider-zod'
-import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 
 import { errorHandler } from '../src/http/error-handler.js'
 import { auth } from '../src/http/middlewares/auth.js'

@@ -1,6 +1,5 @@
-import { hash } from 'bcryptjs'
-
 import { PrismaPg } from '@prisma/adapter-pg'
+import { hash } from 'bcryptjs'
 
 import { PrismaClient } from '../generated/prisma/client/index.js'
 
