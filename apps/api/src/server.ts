@@ -1,6 +1,9 @@
 import fastifyCors from '@fastify/cors'
+import fastifySwagger from '@fastify/swagger'
+import fastifySwaggerUi from '@fastify/swagger-ui'
 import fastify from 'fastify'
 import {
+  jsonSchemaTransform,
   serializerCompiler,
   validatorCompiler,
   type ZodTypeProvider,
@@ -16,6 +19,21 @@ const app = fastify({ logger: true }).withTypeProvider<ZodTypeProvider>()
 app.setValidatorCompiler(validatorCompiler)
 app.setSerializerCompiler(serializerCompiler)
 errorHandler(app)
+
+await app.register(fastifySwagger, {
+  openapi: {
+    info: {
+      title: 'Next.js SaaS + RBAC',
+      description: 'REST API for Next.js SaaS with RBAC',
+      version: '1.0.0',
+    },
+  },
+  transform: jsonSchemaTransform,
+})
+
+await app.register(fastifySwaggerUi, {
+  routePrefix: '/docs',
+})
 
 await app.register(fastifyCors, { origin: true })
 
