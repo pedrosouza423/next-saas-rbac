@@ -16,12 +16,16 @@
     "dev": {
       "cache": false,
       "persistent": true,
-      "env": ["DATABASE_URL", "PORT", "NODE_ENV"]
+      "env": ["DATABASE_URL", "PORT", "NODE_ENV", "JWT_SECRET", "GITHUB_OAUTH_CLIENT_ID", "GITHUB_OAUTH_CLIENT_SECRET", "GITHUB_OAUTH_CLIENT_REDIRECT_URI"]
     },
     "db:generate": {
       "cache": false
     },
     "db:migrate": {
+      "cache": false,
+      "env": ["DATABASE_URL"]
+    },
+    "db:seed": {
       "cache": false,
       "env": ["DATABASE_URL"]
     }

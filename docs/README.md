@@ -37,13 +37,18 @@ quando ler e quando atualizar:
 | [2026-05-27-dark-mode-next-themes-design.md](specs/2026-05-27-dark-mode-next-themes-design.md) | Approved | — |
 | [2026-05-28-api-fastify-prisma-setup.md](specs/2026-05-28-api-fastify-prisma-setup.md) | Implemented | [#8](https://github.com/pedrosouza423/next-saas-rbac/pull/8) |
 | [2026-05-28-apps-docs-purpose.md](specs/2026-05-28-apps-docs-purpose.md) | Proposed | — |
+| [2026-05-29-api-bootstrap-infrastructure.md](specs/2026-05-29-api-bootstrap-infrastructure.md) | Implemented | [#10](https://github.com/pedrosouza423/next-saas-rbac/pull/10) |
 
 Template para novos specs: [specs/_template.md](specs/_template.md).
 
 ## ADRs (architectural decision records)
 
-Estrutura preparada, conteúdo dos ADRs será escrito conforme cada decisão for revisitada.
-Veja [adr/README.md](adr/README.md) para o template e a fila priorizada.
+| ADR | Decisão | Status |
+|-----|---------|--------|
+| [0001-error-class-prototype-fix.md](adr/0001-error-class-prototype-fix.md) | Object.setPrototypeOf em Error subclasses | Accepted |
+| [0002-github-oauth-env-optional.md](adr/0002-github-oauth-env-optional.md) | GitHub OAuth env vars opcionais | Accepted |
+
+Veja [adr/README.md](adr/README.md) para o template e a fila priorizada de ADRs futuros.
 
 ## Plans
 
@@ -93,8 +98,8 @@ a área saiba que existe dívida documental e possa endereçá-la junto:
 | `architecture/deployment.md` | Quando primeira pipeline CI/CD subir | PR de deploy |
 | `architecture/ui-components.md` | Quando `@saas/ui` passar de 5+ componentes | PR que adiciona o 6º componente |
 | `specs/<date>-apps-web-features.md` | Primeiro spec real do front | PR com primeira tela de negócio |
-| `adr/0001-pnpm-turborepo.md` | Quando alguém questionar a escolha | Re-discussão de toolchain |
-| `adr/0002-source-only-package-exports.md` | Quando precisar adicionar build step | Mudança no padrão de export |
-| `adr/0003-fastify-over-next-api-routes.md` | Quando alguém propuser usar Next API routes | Re-discussão de arquitetura |
-| `adr/0004-casl-no-manage-all.md` | Quando alguém propuser `manage all` para ADMIN | Re-discussão de RBAC |
-| `adr/0005-prisma-7-driver-adapter-pg.md` | Quando alguém propuser voltar para Prisma binary engine | Re-discussão de DB |
+| `adr/0003-pnpm-turborepo.md` | Quando alguém questionar a escolha | Re-discussão de toolchain |
+| `adr/0004-source-only-package-exports.md` | Quando precisar adicionar build step | Mudança no padrão de export |
+| `adr/0005-fastify-over-next-api-routes.md` | Quando alguém propuser usar Next API routes | Re-discussão de arquitetura |
+| `adr/0006-casl-no-manage-all.md` | Quando alguém propuser `manage all` para ADMIN | Re-discussão de RBAC |
+| `adr/0007-prisma-7-driver-adapter-pg.md` | Quando alguém propuser voltar para Prisma binary engine | Re-discussão de DB |
