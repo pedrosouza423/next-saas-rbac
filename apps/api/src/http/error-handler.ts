@@ -1,4 +1,4 @@
-import type { FastifyInstance } from 'fastify'
+import type { FastifyError, FastifyInstance } from 'fastify'
 import { hasZodFastifySchemaValidationErrors } from 'fastify-type-provider-zod'
 
 import { BadRequestError } from './errors/bad-request-error.js'
@@ -6,7 +6,7 @@ import { NotFoundError } from './errors/not-found-error.js'
 import { UnauthorizedError } from './errors/unauthorized-error.js'
 
 export function errorHandler(app: FastifyInstance) {
-  app.setErrorHandler((error, _request, reply) => {
+  app.setErrorHandler((error: FastifyError, _request, reply) => {
     if (hasZodFastifySchemaValidationErrors(error)) {
       return reply.status(400).send({
         message: 'Validation error.',
@@ -14,11 +14,9 @@ export function errorHandler(app: FastifyInstance) {
       })
     }
 
-    // Fastify emits FST_ERR_VALIDATION when the validator itself throws
-    // (e.g. fastify-type-provider-zod compat issues with Zod v4 where
-    // .errors does not exist on ZodError — only .issues does).
-    // Treat any validation-context error as a 400.
-    if ('code' in error && error.code === 'FST_ERR_VALIDATION') {
+    // fastify-type-provider-zod v4 + Zod v4 compat: validator throws and
+    // Fastify wraps it as FST_ERR_VALIDATION before hasZodFastifySchemaValidationErrors runs.
+    if (error.code === 'FST_ERR_VALIDATION') {
       return reply.status(400).send({ message: 'Validation error.' })
     }
 
