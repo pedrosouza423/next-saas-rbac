@@ -12,6 +12,7 @@ import { z } from 'zod/v4'
 
 import { env } from './env.js'
 import { errorHandler } from './http/error-handler.js'
+import { auth } from './http/middlewares/auth.js'
 import { prisma } from './lib/prisma.js'
 
 const app = fastify({ logger: true }).withTypeProvider<ZodTypeProvider>()
@@ -34,6 +35,8 @@ await app.register(fastifySwagger, {
 await app.register(fastifySwaggerUi, {
   routePrefix: '/docs',
 })
+
+await app.register(auth)
 
 await app.register(fastifyCors, { origin: true })
 
