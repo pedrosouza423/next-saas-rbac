@@ -10,7 +10,8 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx --env-file .env prisma/seed.ts",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "test": "vitest run --reporter=verbose"
   },
   "prisma": {
     "seed": "tsx --env-file .env prisma/seed.ts"
@@ -36,8 +37,10 @@
     "@types/bcryptjs": "^3.0.0",
     "@types/node": "^22.15.3",
     "@types/pg": "^8.11.10",
+    "@vitest/coverage-v8": "^4.1.7",
     "prisma": "^7.0.0",
     "tsx": "^4.20.6",
-    "typescript": "5.9.2"
+    "typescript": "5.9.2",
+    "vitest": "^4.1.7"
   }
 }
