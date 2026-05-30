@@ -1,12 +1,12 @@
 import bcrypt from 'bcryptjs'
-import type { FastifyInstance } from 'fastify'
 import fp from 'fastify-plugin'
+import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { z } from 'zod/v4'
 
 import { prisma } from '../../../lib/prisma.js'
 import { ConflictError } from '../../errors/conflict-error.js'
 
-export const createAccountRoute = fp(async (app: FastifyInstance) => {
+const plugin: FastifyPluginAsyncZod = async (app) => {
   app.post(
     '/users',
     {
@@ -52,4 +52,6 @@ export const createAccountRoute = fp(async (app: FastifyInstance) => {
       return reply.status(201).send({ userId: user.id })
     },
   )
-})
+}
+
+export const createAccountRoute = fp(plugin)

@@ -1,12 +1,12 @@
 import bcrypt from 'bcryptjs'
-import type { FastifyInstance } from 'fastify'
 import fp from 'fastify-plugin'
+import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { z } from 'zod/v4'
 
-import { BadRequestError } from '../../errors/bad-request-error.js'
 import { prisma } from '../../../lib/prisma.js'
+import { BadRequestError } from '../../errors/bad-request-error.js'
 
-export const authenticateWithPasswordRoute = fp(async (app: FastifyInstance) => {
+const plugin: FastifyPluginAsyncZod = async (app) => {
   app.post(
     '/sessions/password',
     {
@@ -41,4 +41,6 @@ export const authenticateWithPasswordRoute = fp(async (app: FastifyInstance) => 
       return reply.status(200).send({ token })
     },
   )
-})
+}
+
+export const authenticateWithPasswordRoute = fp(plugin)

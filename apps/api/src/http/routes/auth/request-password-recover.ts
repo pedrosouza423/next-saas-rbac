@@ -1,10 +1,10 @@
-import type { FastifyInstance } from 'fastify'
 import fp from 'fastify-plugin'
+import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { z } from 'zod/v4'
 
 import { prisma } from '../../../lib/prisma.js'
 
-export const requestPasswordRecoverRoute = fp(async (app: FastifyInstance) => {
+const plugin: FastifyPluginAsyncZod = async (app) => {
   app.post(
     '/password/recover',
     {
@@ -30,4 +30,6 @@ export const requestPasswordRecoverRoute = fp(async (app: FastifyInstance) => {
       return reply.status(201).send({})
     },
   )
-})
+}
+
+export const requestPasswordRecoverRoute = fp(plugin)

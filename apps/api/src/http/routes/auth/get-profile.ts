@@ -1,11 +1,11 @@
-import type { FastifyInstance } from 'fastify'
 import fp from 'fastify-plugin'
+import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { z } from 'zod/v4'
 
-import { BadRequestError } from '../../errors/bad-request-error.js'
 import { prisma } from '../../../lib/prisma.js'
+import { BadRequestError } from '../../errors/bad-request-error.js'
 
-export const getProfileRoute = fp(async (app: FastifyInstance) => {
+const plugin: FastifyPluginAsyncZod = async (app) => {
   app.get(
     '/profile',
     {
@@ -38,4 +38,6 @@ export const getProfileRoute = fp(async (app: FastifyInstance) => {
       })
     },
   )
-})
+}
+
+export const getProfileRoute = fp(plugin)
