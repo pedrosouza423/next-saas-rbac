@@ -2,11 +2,11 @@ import { describe, expect, it, vi } from 'vitest'
 import { z } from 'zod/v4'
 
 import { BadRequestError } from '../src/http/errors/bad-request-error.js'
+import { ConflictError } from '../src/http/errors/conflict-error.js'
 import { NotFoundError } from '../src/http/errors/not-found-error.js'
 import { UnauthorizedError } from '../src/http/errors/unauthorized-error.js'
 import { createTestApp } from './create-test-app.js'
 
-// Prevent prisma from attempting a real DB connection at module load
 vi.mock('../src/lib/prisma.js', () => ({
   prisma: {
     member: {
@@ -36,7 +36,6 @@ describe('Error Handler', () => {
     expect(response.statusCode).toBe(400)
     const body = response.json()
     expect(body.message).toBe('Validation error.')
-    // FST_ERR_VALIDATION path (fastify-type-provider-zod v4 + zod v4 compat) does not populate errors field
     expect(body.errors).toBeUndefined()
   })
 
@@ -98,6 +97,26 @@ describe('Error Handler', () => {
 
     expect(response.statusCode).toBe(404)
     expect(response.json().message).toBe('resource not found')
+  })
+
+  it('returns 409 for ConflictError', async () => {
+    const app = await createTestApp()
+
+    app.get('/test-conflict', {
+      handler: async () => {
+        throw new ConflictError('resource already exists')
+      },
+    })
+
+    await app.ready()
+
+    const response = await app.inject({
+      method: 'GET',
+      url: '/test-conflict',
+    })
+
+    expect(response.statusCode).toBe(409)
+    expect(response.json().message).toBe('resource already exists')
   })
 
   it('returns 500 for unhandled errors', async () => {
