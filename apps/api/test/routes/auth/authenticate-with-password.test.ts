@@ -1,8 +1,8 @@
 import bcrypt from 'bcryptjs'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { createTestApp } from '../../create-test-app.js'
 import { authenticateWithPasswordRoute } from '../../../src/http/routes/auth/authenticate-with-password.js'
+import { createTestApp } from '../../create-test-app.js'
 
 vi.mock('../../../src/lib/prisma.js', () => ({
   prisma: {

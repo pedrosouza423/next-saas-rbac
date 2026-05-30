@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { createTestApp } from '../../create-test-app.js'
 import { requestPasswordRecoverRoute } from '../../../src/http/routes/auth/request-password-recover.js'
+import { createTestApp } from '../../create-test-app.js'
 
 vi.mock('../../../src/lib/prisma.js', () => ({
   prisma: {
