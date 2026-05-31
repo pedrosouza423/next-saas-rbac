@@ -12,6 +12,7 @@ const plugin: FastifyPluginAsyncZod = async (app) => {
       schema: {
         tags: ['auth'],
         summary: 'Get authenticated user profile',
+        security: [{ bearerAuth: [] }],
         response: {
           200: z.object({
             id: z.string(),

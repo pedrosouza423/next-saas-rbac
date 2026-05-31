@@ -29,6 +29,15 @@ await app.register(fastifySwagger, {
       description: 'REST API for Next.js SaaS with RBAC',
       version: '1.0.0',
     },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+    },
   },
   transform: jsonSchemaTransform,
 })
