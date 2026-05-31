@@ -48,6 +48,7 @@ export async function getGithubUserData(code: string): Promise<GithubUserData> {
   const tokenData = (await tokenRes.json()) as GithubTokenResponse
 
   if (!tokenData.access_token) {
+    console.warn('GitHub token exchange failed:', tokenData.error)
     throw new BadRequestError('Invalid GitHub OAuth code.')
   }
 
@@ -60,6 +61,10 @@ export async function getGithubUserData(code: string): Promise<GithubUserData> {
     fetch('https://api.github.com/user', { headers }),
     fetch('https://api.github.com/user/emails', { headers }),
   ])
+
+  if (!userRes.ok || !emailsRes.ok) {
+    throw new BadRequestError('Failed to fetch GitHub user data.')
+  }
 
   const githubUser = (await userRes.json()) as GithubUser
   const emails = (await emailsRes.json()) as GithubEmail[]

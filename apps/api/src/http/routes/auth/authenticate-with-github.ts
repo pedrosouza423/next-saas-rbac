@@ -37,12 +37,16 @@ const plugin: FastifyPluginAsyncZod = async (app) => {
         const existingUser = await prisma.user.findUnique({ where: { email } })
 
         if (existingUser) {
-          await prisma.account.create({
-            data: {
+          // Auto-attach is intentionally skipped here: existing users already ran it on
+          // account creation. Linking a new auth method is not a re-creation event.
+          await prisma.account.upsert({
+            where: { providerAccountId: githubId },
+            create: {
               provider: 'GITHUB',
               providerAccountId: githubId,
               userId: existingUser.id,
             },
+            update: {},
           })
           user = existingUser
         } else {
