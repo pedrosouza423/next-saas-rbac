@@ -39,6 +39,7 @@ Veja [auth-flow.md](auth-flow.md) para os fluxos completos.
 |--------|------|------|---------|-----------|
 | `POST` | `/users` | — | `201` | Criar conta |
 | `POST` | `/sessions/password` | — | `200` | Login por e-mail/senha |
+| `POST` | `/sessions/github` | — | `200` | Login via GitHub OAuth |
 | `GET` | `/profile` | ✅ Bearer | `200` | Perfil do usuário autenticado |
 | `POST` | `/password/recover` | — | `201` | Solicitar reset de senha |
 | `POST` | `/password/reset` | — | `204` | Confirmar reset de senha |
@@ -79,6 +80,18 @@ Veja [auth-flow.md](auth-flow.md) para os fluxos completos.
 
 // 404 — user deletado com JWT ainda válido
 { "message": "User not found." }
+```
+
+#### `POST /sessions/github`
+```json
+// Body
+{ "code": "string" }
+
+// 200
+{ "token": "string (JWT)" }
+
+// 400 — código OAuth inválido, sem e-mail verificado, OAuth não configurado
+{ "message": "string" }
 ```
 
 #### `POST /password/recover`
@@ -127,12 +140,16 @@ Cada rota vive em seu próprio arquivo Fastify plugin (`fastify-plugin`) em
 
 ```
 apps/api/src/http/routes/auth/
+├── authenticate-with-github.ts
 ├── authenticate-with-password.ts
 ├── create-account.ts
 ├── get-profile.ts
 ├── index.ts
 ├── request-password-recover.ts
 └── reset-password.ts
+
+apps/api/src/http/lib/
+└── github.ts     # helper getGithubUserData(code)
 ```
 
 ## Related docs

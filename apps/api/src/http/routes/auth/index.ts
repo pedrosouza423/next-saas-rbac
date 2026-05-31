@@ -1,5 +1,6 @@
 import fp from 'fastify-plugin'
 
+import { authenticateWithGithubRoute } from './authenticate-with-github.js'
 import { authenticateWithPasswordRoute } from './authenticate-with-password.js'
 import { createAccountRoute } from './create-account.js'
 import { getProfileRoute } from './get-profile.js'
@@ -9,6 +10,7 @@ import { resetPasswordRoute } from './reset-password.js'
 export const authRoutes = fp(async (app) => {
   app.register(createAccountRoute)
   app.register(authenticateWithPasswordRoute)
+  app.register(authenticateWithGithubRoute)
   app.register(getProfileRoute)
   app.register(requestPasswordRecoverRoute)
   app.register(resetPasswordRoute)
