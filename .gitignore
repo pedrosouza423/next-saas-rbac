@@ -42,3 +42,6 @@ yarn-error.log*
 
 # Claude Code local settings (personal)
 .claude/settings.local.json
+
+# Git worktrees (managed by Claude Code)
+.worktrees/
