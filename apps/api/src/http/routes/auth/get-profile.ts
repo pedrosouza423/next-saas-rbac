@@ -3,7 +3,7 @@ import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { z } from 'zod/v4'
 
 import { prisma } from '../../../lib/prisma.js'
-import { BadRequestError } from '../../errors/bad-request-error.js'
+import { NotFoundError } from '../../errors/not-found-error.js'
 
 const plugin: FastifyPluginAsyncZod = async (app) => {
   app.get(
@@ -27,7 +27,7 @@ const plugin: FastifyPluginAsyncZod = async (app) => {
 
       const user = await prisma.user.findUnique({ where: { id: userId } })
       if (!user) {
-        throw new BadRequestError('User not found.')
+        throw new NotFoundError('User not found.')
       }
 
       return reply.status(200).send({
