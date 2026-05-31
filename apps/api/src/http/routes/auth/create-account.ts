@@ -3,6 +3,7 @@ import fp from 'fastify-plugin'
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { z } from 'zod/v4'
 
+import { BCRYPT_ROUNDS } from '../../../lib/constants.js'
 import { prisma } from '../../../lib/prisma.js'
 import { ConflictError } from '../../errors/conflict-error.js'
 
@@ -31,23 +32,28 @@ const plugin: FastifyPluginAsyncZod = async (app) => {
         throw new ConflictError('User with same email already exists.')
       }
 
-      const passwordHash = await bcrypt.hash(password, 6)
-      const user = await prisma.user.create({
-        data: { name, email, passwordHash },
-      })
+      const passwordHash = await bcrypt.hash(password, BCRYPT_ROUNDS)
 
-      const emailDomain = email.split('@').at(1)
-      if (emailDomain) {
-        const org = await prisma.organization.findFirst({
-          where: { shouldAttachUsersByDomain: true, domain: emailDomain },
+      const user = await prisma.$transaction(async (tx) => {
+        const newUser = await tx.user.create({
+          data: { name, email, passwordHash },
         })
 
-        if (org) {
-          await prisma.member.create({
-            data: { userId: user.id, organizationId: org.id, role: 'MEMBER' },
+        const emailDomain = email.split('@').at(1)
+        if (emailDomain) {
+          const org = await tx.organization.findFirst({
+            where: { shouldAttachUsersByDomain: true, domain: emailDomain },
           })
+
+          if (org) {
+            await tx.member.create({
+              data: { userId: newUser.id, organizationId: org.id, role: 'MEMBER' },
+            })
+          }
         }
-      }
+
+        return newUser
+      })
 
       return reply.status(201).send({ userId: user.id })
     },
