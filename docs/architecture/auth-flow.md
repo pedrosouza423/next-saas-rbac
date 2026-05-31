@@ -1,10 +1,10 @@
 # Architecture — Authentication Flow
 
 **Last updated:** 2026-05-31
-**Implemented in:** PR #22 (`feat/api-auth-routes`)
+**Implemented in:** PR #22 (`feat/api-auth-routes`), PR #12 (`feat/api-oauth-github`)
 
-Fluxos de autenticação por e-mail/senha suportados pela API. OAuth (GitHub) está planejado mas
-não implementado — veja [ADR-0002](../adr/0002-github-oauth-env-optional.md) e
+Fluxos de autenticação suportados pela API: e-mail/senha e GitHub OAuth.
+Veja [ADR-0002](../adr/0002-github-oauth-env-optional.md) e
 [ADR-0003](../adr/0003-jwt-auth-strategy.md).
 
 ## Visão geral
@@ -126,6 +126,26 @@ Rotas públicas (não requerem token): `POST /users`, `POST /sessions/password`,
 
 Rotas protegidas (requerem `Authorization: Bearer <token>`): `GET /profile` e qualquer
 endpoint futuro que chame `request.getCurrentUserId()`.
+
+### 6. GitHub OAuth — `POST /sessions/github`
+
+```
+Body: { code }
+```
+
+1. `getGithubUserData(code)` (helper em `src/http/lib/github.ts`):
+   - POST `github.com/login/oauth/access_token` → troca `code` por `access_token`
+   - GET `api.github.com/user` + `api.github.com/user/emails`
+   - Filtra e-mail `primary && verified` → 400 se não houver
+2. `account.findFirst({ provider: GITHUB, providerAccountId: githubId })`:
+   - Encontrou → carrega User vinculado
+3. Não encontrou Account:
+   - `user.findUnique({ email })` existe? → cria Account(GITHUB) vinculada (auto-link)
+   - Não existe → `$transaction`: cria User + Account + auto-attach por domínio
+4. `jwt.sign({ sub: user.id }, { expiresIn: '7d' })` → `200 { token }`
+
+**Auto-link:** usuário com conta por senha que faz GitHub OAuth com o mesmo e-mail tem o
+Account(GITHUB) criado e vinculado automaticamente — sem perder a senha existente.
 
 ## Related docs
 

@@ -43,6 +43,7 @@ quando ler e quando atualizar:
 | [2026-05-28-apps-docs-purpose.md](specs/2026-05-28-apps-docs-purpose.md) | Proposed | — |
 | [2026-05-29-api-bootstrap-infrastructure.md](specs/2026-05-29-api-bootstrap-infrastructure.md) | Implemented | [#10](https://github.com/pedrosouza423/next-saas-rbac/pull/10) |
 | [2026-05-29-api-auth-routes.md](specs/2026-05-29-api-auth-routes.md) | Implemented | [#22](https://github.com/pedrosouza423/next-saas-rbac/pull/22) |
+| [2026-05-31-api-oauth-github.md](specs/2026-05-31-api-oauth-github.md) | Implemented | [#12](https://github.com/pedrosouza423/next-saas-rbac/pull/12) |
 
 Template para novos specs: [specs/_template.md](specs/_template.md).
 
