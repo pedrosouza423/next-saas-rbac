@@ -21,7 +21,7 @@ const plugin: FastifyPluginAsyncZod = async (app) => {
       const user = await prisma.user.findUnique({ where: { email } })
 
       if (user) {
-        const token = await prisma.token.create({
+        await prisma.token.create({
           data: { type: 'PASSWORD_RECOVER', userId: user.id },
         })
       }
