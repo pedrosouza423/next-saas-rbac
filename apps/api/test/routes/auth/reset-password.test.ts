@@ -90,5 +90,31 @@ describe('POST /password/reset', () => {
 
     expect(response.statusCode).toBe(400)
     expect(response.json().message).toBe('Token expired.')
+    expect(prisma.token.delete).toHaveBeenCalledWith({ where: { id: 'token-uuid-1' } })
+  })
+
+  it('returns 400 when token type is not PASSWORD_RECOVER', async () => {
+    const { prisma } = await import('../../../src/lib/prisma.js')
+
+    vi.mocked(prisma.token.findUnique).mockResolvedValue({
+      id: 'token-uuid-1',
+      type: 'INVITE',
+      userId: 'user-1',
+      createdAt: new Date(),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any)
+
+    const app = await createTestApp()
+    app.register(resetPasswordRoute)
+    await app.ready()
+
+    const response = await app.inject({
+      method: 'POST',
+      url: '/password/reset',
+      payload: { code: 'f47ac10b-58cc-4372-a567-0e02b2c3d479', password: 'newpassword' },
+    })
+
+    expect(response.statusCode).toBe(400)
+    expect(response.json().message).toBe('Invalid token.')
   })
 })
