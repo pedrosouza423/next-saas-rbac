@@ -24,7 +24,6 @@ const plugin: FastifyPluginAsyncZod = async (app) => {
         const token = await prisma.token.create({
           data: { type: 'PASSWORD_RECOVER', userId: user.id },
         })
-        console.log('Password recover token:', token.id)
       }
 
       return reply.status(201).send({})
