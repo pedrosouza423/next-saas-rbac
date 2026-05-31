@@ -13,6 +13,7 @@ import { z } from 'zod/v4'
 import { env } from './env.js'
 import { errorHandler } from './http/error-handler.js'
 import { auth } from './http/middlewares/auth.js'
+import { authRoutes } from './http/routes/auth/index.js'
 import { prisma } from './lib/prisma.js'
 
 const app = fastify({ logger: true }).withTypeProvider<ZodTypeProvider>()
@@ -28,6 +29,15 @@ await app.register(fastifySwagger, {
       description: 'REST API for Next.js SaaS with RBAC',
       version: '1.0.0',
     },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+    },
   },
   transform: jsonSchemaTransform,
 })
@@ -37,6 +47,7 @@ await app.register(fastifySwaggerUi, {
 })
 
 await app.register(auth)
+await app.register(authRoutes)
 
 await app.register(fastifyCors, { origin: true })
 
