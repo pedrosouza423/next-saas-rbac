@@ -1,6 +1,6 @@
 # Architecture — Local Development
 
-**Last updated:** 2026-05-28
+**Last updated:** 2026-05-31
 
 Tudo que você precisa pra subir o projeto localmente. Consolida info que estava espalhada
 entre [CLAUDE.md](../../CLAUDE.md), [docker-compose.yml](../../docker-compose.yml),
@@ -63,6 +63,10 @@ qualquer var ausente/inválida lança erro antes do servidor subir.
 | `DATABASE_URL` | `api` (Prisma + Fastify) | — (required) | [turbo.json](../../turbo.json) tasks `dev`, `db:migrate`; [apps/api/.env.example](../../apps/api/.env.example) |
 | `PORT` | `api` | `3333` | [turbo.json](../../turbo.json) task `dev`; [apps/api/.env.example](../../apps/api/.env.example) |
 | `NODE_ENV` | `api` (logs do Prisma) | `development` | [turbo.json](../../turbo.json) task `dev` |
+| `JWT_SECRET` | `api` (`@fastify/jwt`) | — (required, mín. 8 chars) | [apps/api/.env.example](../../apps/api/.env.example) |
+| `GITHUB_OAUTH_CLIENT_ID` | `api` (OAuth — futuro) | — (optional) | [apps/api/.env.example](../../apps/api/.env.example) |
+| `GITHUB_OAUTH_CLIENT_SECRET` | `api` (OAuth — futuro) | — (optional) | [apps/api/.env.example](../../apps/api/.env.example) |
+| `GITHUB_OAUTH_CLIENT_REDIRECT_URI` | `api` (OAuth — futuro) | — (optional) | [apps/api/.env.example](../../apps/api/.env.example) |
 
 > **Importante:** se você acessar uma env var no código, ela **precisa** estar declarada em
 > [turbo.json](../../turbo.json) (`env` ou `passThroughEnv`). O ESLint rule `turbo/no-undeclared-env-vars`
@@ -145,6 +149,7 @@ pnpm build                         # turbo build (Next.js builds)
 |---|---|---|
 | `Error: connect ECONNREFUSED 127.0.0.1:5433` | Container Postgres não tá rodando | `docker compose up -d` |
 | `Environment variable not found: DATABASE_URL` em `prisma migrate` | `.env` não copiado de `.env.example` | Copiar e rodar de novo |
+| `ZodError: JWT_SECRET ... received undefined` | `JWT_SECRET` não definida em `.env` | Adicionar `JWT_SECRET="..."` (mín. 8 chars) em `apps/api/.env` |
 | Lint falha com `no-undeclared-env-vars` | Var nova no código sem declarar em turbo.json | Adicionar em `tasks.<task>.env` ou `globalEnv` |
 | Porta 5432 ocupada | Postgres local instalado na máquina | Usamos `5433` no host justamente por isso — verifique a `DATABASE_URL` |
 | `next typegen` falha | Arquivo de rota inválido | Rodar `pnpm --filter=web dev` para ver o erro exato |

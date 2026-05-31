@@ -28,6 +28,10 @@ quando ler e quando atualizar:
   subjects × actions × roles, padrão de uso, decisões de type-safety
 - [architecture/local-development.md](architecture/local-development.md) — setup local
   consolidado: docker, env vars, portas, comandos por workflow
+- [architecture/auth-flow.md](architecture/auth-flow.md) — fluxos de autenticação:
+  signup, login, perfil, recovery/reset de senha, auto-attach por domínio
+- [architecture/api-routes.md](architecture/api-routes.md) — referência de todos os
+  endpoints: contratos, status codes, error envelope
 
 ## Specs (time-bound)
 
@@ -38,6 +42,7 @@ quando ler e quando atualizar:
 | [2026-05-28-api-fastify-prisma-setup.md](specs/2026-05-28-api-fastify-prisma-setup.md) | Implemented | [#8](https://github.com/pedrosouza423/next-saas-rbac/pull/8) |
 | [2026-05-28-apps-docs-purpose.md](specs/2026-05-28-apps-docs-purpose.md) | Proposed | — |
 | [2026-05-29-api-bootstrap-infrastructure.md](specs/2026-05-29-api-bootstrap-infrastructure.md) | Implemented | [#10](https://github.com/pedrosouza423/next-saas-rbac/pull/10) |
+| [2026-05-29-api-auth-routes.md](specs/2026-05-29-api-auth-routes.md) | Implemented | [#22](https://github.com/pedrosouza423/next-saas-rbac/pull/22) |
 
 Template para novos specs: [specs/_template.md](specs/_template.md).
 
@@ -47,6 +52,7 @@ Template para novos specs: [specs/_template.md](specs/_template.md).
 |-----|---------|--------|
 | [0001-error-class-prototype-fix.md](adr/0001-error-class-prototype-fix.md) | Object.setPrototypeOf em Error subclasses | Accepted |
 | [0002-github-oauth-env-optional.md](adr/0002-github-oauth-env-optional.md) | GitHub OAuth env vars opcionais | Accepted |
+| [0003-jwt-auth-strategy.md](adr/0003-jwt-auth-strategy.md) | JWT stateless, bcrypt rounds = 10, token expiry = 1h | Accepted |
 
 Veja [adr/README.md](adr/README.md) para o template e a fila priorizada de ADRs futuros.
 
@@ -93,8 +99,6 @@ a área saiba que existe dívida documental e possa endereçá-la junto:
 
 | Doc | Quando criar | Trigger |
 |---|---|---|
-| `architecture/api-routes.md` | Quando API tiver rotas além de `/health` | Primeiro endpoint de negócio |
-| `architecture/auth-flow.md` | Quando login/sessões forem implementados | PR de autenticação |
 | `architecture/deployment.md` | Quando primeira pipeline CI/CD subir | PR de deploy |
 | `architecture/ui-components.md` | Quando `@saas/ui` passar de 5+ componentes | PR que adiciona o 6º componente |
 | `specs/<date>-apps-web-features.md` | Primeiro spec real do front | PR com primeira tela de negócio |
