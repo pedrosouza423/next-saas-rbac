@@ -2,8 +2,8 @@ import fp from 'fastify-plugin'
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { z } from 'zod/v4'
 
-import { getGithubUserData } from '../../lib/github.js'
 import { prisma } from '../../../lib/prisma.js'
+import { getGithubUserData } from '../../lib/github.js'
 
 const plugin: FastifyPluginAsyncZod = async (app) => {
   app.post(
