@@ -118,7 +118,7 @@ model Project {
   id          String   @id @default(uuid())
   name        String
   description String
-  slug        String   @unique
+  slug        String
   avatarUrl   String?  @map("avatar_url")
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
@@ -129,5 +129,6 @@ model Project {
   owner   User   @relation(fields: [ownerId], references: [id])
   ownerId String @map("owner_id")
 
+  @@unique([slug, organizationId])
   @@map("projects")
 }
