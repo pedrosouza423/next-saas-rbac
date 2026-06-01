@@ -4,15 +4,7 @@ import { z } from 'zod/v4'
 
 import { prisma } from '../../../lib/prisma.js'
 import { ConflictError } from '../../errors/conflict-error.js'
-
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, '')
-    .replace(/[\s_]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-}
+import { slugify } from '../../lib/slugify.js'
 
 const plugin: FastifyPluginAsyncZod = async (app) => {
   app.post(
