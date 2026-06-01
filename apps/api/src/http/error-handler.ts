@@ -3,6 +3,7 @@ import { hasZodFastifySchemaValidationErrors } from 'fastify-type-provider-zod'
 
 import { BadRequestError } from './errors/bad-request-error.js'
 import { ConflictError } from './errors/conflict-error.js'
+import { ForbiddenError } from './errors/forbidden-error.js'
 import { NotFoundError } from './errors/not-found-error.js'
 import { UnauthorizedError } from './errors/unauthorized-error.js'
 
@@ -25,6 +26,10 @@ export function errorHandler(app: FastifyInstance) {
 
     if (error instanceof UnauthorizedError) {
       return reply.status(401).send({ message: error.message })
+    }
+
+    if (error instanceof ForbiddenError) {
+      return reply.status(403).send({ message: error.message })
     }
 
     if (error instanceof NotFoundError) {

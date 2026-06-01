@@ -20,7 +20,7 @@ export function projectCan(
 
 export function organizationCan(
   ability: AppAbility,
-  action: 'update' | 'transfer_ownership',
+  action: 'update' | 'delete' | 'transfer_ownership',
   subject: Organization,
 ): boolean {
   return ability.can(action, subject)
