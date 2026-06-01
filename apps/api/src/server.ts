@@ -15,6 +15,7 @@ import { errorHandler } from './http/error-handler.js'
 import { auth } from './http/middlewares/auth.js'
 import { authRoutes } from './http/routes/auth/index.js'
 import { orgRoutes } from './http/routes/orgs/index.js'
+import { projectRoutes } from './http/routes/projects/index.js'
 import { prisma } from './lib/prisma.js'
 
 const app = fastify({ logger: true }).withTypeProvider<ZodTypeProvider>()
@@ -50,6 +51,7 @@ await app.register(fastifySwaggerUi, {
 await app.register(auth)
 await app.register(authRoutes)
 await app.register(orgRoutes)
+await app.register(projectRoutes)
 
 await app.register(fastifyCors, { origin: true })
 
