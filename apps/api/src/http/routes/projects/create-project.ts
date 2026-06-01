@@ -1,20 +1,13 @@
-import { defineAbilityFor, userSchema } from '@saas/auth'
 import fp from 'fastify-plugin'
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { z } from 'zod/v4'
 
 import { prisma } from '../../../lib/prisma.js'
+import { BadRequestError } from '../../errors/bad-request-error.js'
 import { ConflictError } from '../../errors/conflict-error.js'
 import { ForbiddenError } from '../../errors/forbidden-error.js'
-
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, '')
-    .replace(/[\s_]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-}
+import { buildUserAbility } from '../../lib/build-ability.js'
+import { slugify } from '../../lib/slugify.js'
 
 const plugin: FastifyPluginAsyncZod = async (app) => {
   app.post(
@@ -39,9 +32,7 @@ const plugin: FastifyPluginAsyncZod = async (app) => {
       const { slug } = request.params
       const { organization, membership } = await request.getUserMembership(slug)
 
-      const ability = defineAbilityFor(
-        userSchema.parse({ id: membership.userId, role: membership.role }),
-      )
+      const ability = buildUserAbility(membership)
 
       if (!ability.can('create', 'Project')) {
         throw new ForbiddenError('You are not allowed to create projects.')
@@ -49,6 +40,12 @@ const plugin: FastifyPluginAsyncZod = async (app) => {
 
       const { name, description, avatarUrl } = request.body
       const projectSlug = slugify(name)
+
+      if (!projectSlug) {
+        throw new BadRequestError(
+          'Project name must contain at least one alphanumeric character.',
+        )
+      }
 
       const existingBySlug = await prisma.project.findUnique({
         where: {
@@ -74,8 +71,8 @@ const plugin: FastifyPluginAsyncZod = async (app) => {
           },
         })
       } catch (err) {
-        const e = err as { code?: string; meta?: { target?: string[] } }
-        if (e?.code === 'P2002' && e.meta?.target?.includes('slug')) {
+        const e = err as { code?: string }
+        if (e?.code === 'P2002') {
           throw new ConflictError(
             'A project with the same name (slug) already exists.',
           )

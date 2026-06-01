@@ -1,4 +1,4 @@
-import { defineAbilityFor, projectCan, projectSchema, userSchema } from '@saas/auth'
+import { projectCan, projectSchema } from '@saas/auth'
 import fp from 'fastify-plugin'
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { z } from 'zod/v4'
@@ -6,6 +6,7 @@ import { z } from 'zod/v4'
 import { prisma } from '../../../lib/prisma.js'
 import { ForbiddenError } from '../../errors/forbidden-error.js'
 import { NotFoundError } from '../../errors/not-found-error.js'
+import { buildUserAbility } from '../../lib/build-ability.js'
 
 const plugin: FastifyPluginAsyncZod = async (app) => {
   app.delete(
@@ -25,6 +26,13 @@ const plugin: FastifyPluginAsyncZod = async (app) => {
       const { slug, projectId } = request.params
       const { organization, membership } = await request.getUserMembership(slug)
 
+      const ability = buildUserAbility(membership)
+
+      // Fast path: role can never delete any project (e.g. BILLING)
+      if (!ability.can('delete', 'Project')) {
+        throw new ForbiddenError('You are not allowed to delete this project.')
+      }
+
       const project = await prisma.project.findFirst({
         where: { id: projectId, organizationId: organization.id },
       })
@@ -33,9 +41,6 @@ const plugin: FastifyPluginAsyncZod = async (app) => {
         throw new NotFoundError('Project not found.')
       }
 
-      const ability = defineAbilityFor(
-        userSchema.parse({ id: membership.userId, role: membership.role }),
-      )
       const projectSubject = projectSchema.parse(project)
 
       if (!projectCan(ability, 'delete', projectSubject)) {
