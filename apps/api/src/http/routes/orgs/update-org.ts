@@ -1,4 +1,4 @@
-import { defineAbilityFor, organizationCan, organizationSchema, userSchema } from '@saas/auth'
+import { organizationCan, organizationSchema } from '@saas/auth'
 import fp from 'fastify-plugin'
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { z } from 'zod/v4'
@@ -6,6 +6,7 @@ import { z } from 'zod/v4'
 import { prisma } from '../../../lib/prisma.js'
 import { ConflictError } from '../../errors/conflict-error.js'
 import { ForbiddenError } from '../../errors/forbidden-error.js'
+import { buildUserAbility } from '../../lib/build-ability.js'
 
 const plugin: FastifyPluginAsyncZod = async (app) => {
   app.put(
@@ -30,9 +31,7 @@ const plugin: FastifyPluginAsyncZod = async (app) => {
       const { slug } = request.params
       const { organization, membership } = await request.getUserMembership(slug)
 
-      const ability = defineAbilityFor(
-        userSchema.parse({ id: membership.userId, role: membership.role }),
-      )
+      const ability = buildUserAbility(membership)
       const orgSubject = organizationSchema.parse(organization)
 
       if (!organizationCan(ability, 'update', orgSubject)) {

@@ -216,6 +216,89 @@ Veja [auth-flow.md](auth-flow.md) para os fluxos completos.
 
 ---
 
+### Projects — `tags: ['projects']`
+
+| Method | Path | Auth | Success | ABAC | Descrição |
+|--------|------|------|---------|------|-----------|
+| `POST` | `/organizations/:slug/projects` | ✅ Bearer | `201` | MEMBER+ | Criar projeto |
+| `GET` | `/organizations/:slug/projects` | ✅ Bearer | `200` | membro | Listar projetos da org |
+| `GET` | `/organizations/:slug/projects/:projectSlug` | ✅ Bearer | `200` | membro | Detalhe do projeto |
+| `PUT` | `/organizations/:slug/projects/:projectId` | ✅ Bearer | `204` | owner/ADMIN | Atualizar projeto |
+| `DELETE` | `/organizations/:slug/projects/:projectId` | ✅ Bearer | `204` | owner/ADMIN | Deletar projeto |
+
+#### `POST /organizations/:slug/projects`
+```json
+// Body
+{ "name": "string", "description": "string", "avatarUrl": "string|null (optional)" }
+
+// 201
+{ "projectId": "string" }
+
+// 403 — role BILLING não pode criar projetos
+{ "message": "You are not allowed to create projects." }
+
+// 409 — slug já existe
+{ "message": "A project with the same name (slug) already exists." }
+```
+
+#### `GET /organizations/:slug/projects`
+```json
+// 200
+{
+  "projects": [
+    {
+      "id": "string", "name": "string", "slug": "string",
+      "description": "string", "avatarUrl": "string|null",
+      "createdAt": "datetime", "updatedAt": "datetime",
+      "owner": { "id": "string", "name": "string|null", "avatarUrl": "string|null" }
+    }
+  ]
+}
+```
+
+#### `GET /organizations/:slug/projects/:projectSlug`
+```json
+// 200
+{
+  "project": {
+    "id": "string", "name": "string", "slug": "string",
+    "description": "string", "avatarUrl": "string|null",
+    "ownerId": "string", "organizationId": "string",
+    "createdAt": "datetime", "updatedAt": "datetime"
+  }
+}
+
+// 404 — projeto não existe na org
+{ "message": "Project not found." }
+```
+
+#### `PUT /organizations/:slug/projects/:projectId`
+```json
+// Body (todos opcionais)
+{ "name": "string", "description": "string", "avatarUrl": "string|null" }
+
+// 204 — atualizado
+
+// 403 — não é ADMIN nem owner do projeto
+{ "message": "You are not allowed to update this project." }
+
+// 404 — projeto não existe na org
+{ "message": "Project not found." }
+```
+
+#### `DELETE /organizations/:slug/projects/:projectId`
+```json
+// 204 — deletado
+
+// 403 — não é ADMIN nem owner do projeto
+{ "message": "You are not allowed to delete this project." }
+
+// 404 — projeto não existe na org
+{ "message": "Project not found." }
+```
+
+---
+
 ## Error envelope
 
 Todos os erros seguem o formato:
