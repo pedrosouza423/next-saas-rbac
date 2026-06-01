@@ -1,6 +1,6 @@
 # Architecture — API Routes
 
-**Last updated:** 2026-05-31
+**Last updated:** 2026-06-01
 **Base URL:** `http://localhost:3333` (dev)
 **Swagger UI:** `http://localhost:3333/docs`
 
@@ -117,6 +117,105 @@ Veja [auth-flow.md](auth-flow.md) para os fluxos completos.
 { "message": "Token expired." }
 ```
 
+---
+
+### Organizations — `tags: ['orgs']`
+
+| Method | Path | Auth | Success | ABAC | Descrição |
+|--------|------|------|---------|------|-----------|
+| `POST` | `/organizations` | ✅ Bearer | `201` | — | Criar organização |
+| `GET` | `/organizations` | ✅ Bearer | `200` | — | Listar orgs do usuário |
+| `GET` | `/organizations/:slug` | ✅ Bearer | `200` | membro | Detalhe da org |
+| `GET` | `/organizations/:slug/membership` | ✅ Bearer | `200` | membro | Membership do usuário atual |
+| `PUT` | `/organizations/:slug` | ✅ Bearer | `204` | owner | Atualizar org |
+| `DELETE` | `/organizations/:slug` | ✅ Bearer | `204` | ADMIN | Deletar org |
+| `PATCH` | `/organizations/:slug/owner` | ✅ Bearer | `204` | owner | Transferir ownership |
+
+#### `POST /organizations`
+```json
+// Body
+{ "name": "string", "domain": "string|null (optional)", "shouldAttachUsersByDomain": "boolean (optional)" }
+
+// 201
+{ "organizationId": "string" }
+
+// 409 — slug ou domain já existe
+{ "message": "Another organization with the same name (slug) already exists." }
+```
+
+#### `GET /organizations`
+```json
+// 200
+{
+  "organizations": [
+    { "id": "string", "name": "string", "slug": "string", "avatarUrl": "string|null", "role": "ADMIN|MEMBER|BILLING" }
+  ]
+}
+```
+
+#### `GET /organizations/:slug`
+```json
+// 200
+{
+  "organization": {
+    "id": "string", "name": "string", "slug": "string",
+    "domain": "string|null", "shouldAttachUsersByDomain": "boolean",
+    "avatarUrl": "string|null", "ownerId": "string",
+    "createdAt": "datetime", "updatedAt": "datetime"
+  }
+}
+
+// 401 — não é membro da org
+{ "message": "You are not a member of this organization." }
+```
+
+#### `GET /organizations/:slug/membership`
+```json
+// 200
+{ "membership": { "id": "string", "role": "ADMIN|MEMBER|BILLING", "organizationId": "string", "userId": "string" } }
+```
+
+#### `PUT /organizations/:slug`
+```json
+// Body (todos opcionais)
+{ "name": "string", "domain": "string|null", "shouldAttachUsersByDomain": "boolean" }
+
+// 204 — atualizado
+
+// 403 — não é owner da org
+{ "message": "You are not allowed to update this organization." }
+
+// 409 — domain já pertence a outra org
+{ "message": "Another organization with the same domain already exists." }
+```
+
+#### `DELETE /organizations/:slug`
+```json
+// 204 — deletado
+
+// 403 — não é ADMIN
+{ "message": "You are not allowed to delete this organization." }
+```
+
+#### `PATCH /organizations/:slug/owner`
+```json
+// Body
+{ "transferToUserId": "string" }
+
+// 204 — ownership transferido, novo owner promovido a ADMIN
+
+// 400 — transferindo para si mesmo
+{ "message": "You cannot transfer ownership to yourself." }
+
+// 400 — usuário alvo não é membro da org
+{ "message": "Target user is not a member of this organization." }
+
+// 403 — não é owner da org
+{ "message": "You are not allowed to transfer ownership of this organization." }
+```
+
+---
+
 ## Error envelope
 
 Todos os erros seguem o formato:
@@ -127,9 +226,10 @@ Todos os erros seguem o formato:
 | HTTP | Quando |
 |------|--------|
 | `400` | Validação de schema Zod, credenciais inválidas, token inválido/expirado |
-| `401` | JWT ausente, expirado ou com assinatura inválida |
+| `401` | JWT ausente, expirado ou com assinatura inválida; não-membro tentando acessar org |
+| `403` | Autenticado mas sem permissão ABAC (ex: não-owner tentando update/delete/transfer) |
 | `404` | Recurso não encontrado (user deletado com JWT válido) |
-| `409` | Conflito (e-mail duplicado) |
+| `409` | Conflito (e-mail duplicado, slug/domain já existe) |
 | `422` | Erro de validação Fastify (`FST_ERR_VALIDATION`) |
 | `500` | Erro não tratado |
 
