@@ -1,6 +1,7 @@
 import type { AppAbility } from './ability.js'
 import type { Organization } from './models/organization.js'
 import type { Project } from './models/project.js'
+import type { User } from './models/user.js'
 
 // CASL skips condition evaluation when ability.can() receives a string subject.
 // Rules like `can('delete', 'Project', { ownerId })` always return true for
@@ -22,6 +23,14 @@ export function organizationCan(
   ability: AppAbility,
   action: 'update' | 'delete' | 'transfer_ownership',
   subject: Organization,
+): boolean {
+  return ability.can(action, subject)
+}
+
+export function userCan(
+  ability: AppAbility,
+  action: 'delete',
+  subject: User,
 ): boolean {
   return ability.can(action, subject)
 }

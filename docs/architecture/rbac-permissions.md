@@ -40,7 +40,7 @@ Aqui temos **5 subjects** e **3 roles**:
 | `get` | `User` | ✅ (via manage all) | ✅ | ❌ |
 | `invite` | `User` | ✅ (via manage all) | ✅ | ❌ |
 | `update` | `User` | ✅ (via manage all) | ❌ | ❌ |
-| `delete` | `User` | ✅ (via manage all) | ❌ | ❌ |
+| `delete` | `User` | ✅ (via manage all) | 🔒 self (`id === user.id`) | ❌ |
 | `create` | `Organization` | ✅ (via manage all) | ❌ | ❌ |
 | `delete` | `Organization` | ✅ (via manage all) | ❌ | ❌ |
 | `update` | `Organization` | 🔒 owner | ❌ | ❌ |
@@ -118,11 +118,12 @@ if (ability.can('update', { __typename: 'Project', ownerId: user.id })) {
 ### Typed wrappers for ownership-conditioned actions
 
 Use [`assert-can.ts`](../../packages/auth/src/assert-can.ts) quando precisar checar actions
-que possuem condições de ownership (`ownerId`). O módulo exporta dois helpers:
+que possuem condições de ownership. O módulo exporta três helpers:
 
 ```ts
 projectCan(ability, 'update' | 'delete', projectInstance)
 organizationCan(ability, 'update' | 'transfer_ownership', orgInstance)
+userCan(ability, 'delete', userInstance)
 ```
 
 **Por que existem:** CASL silenciosamente ignora condições (`ownerId: { $eq: user.id }`) quando

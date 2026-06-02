@@ -14,6 +14,7 @@ import { env } from './env.js'
 import { errorHandler } from './http/error-handler.js'
 import { auth } from './http/middlewares/auth.js'
 import { authRoutes } from './http/routes/auth/index.js'
+import { memberRoutes } from './http/routes/members/index.js'
 import { orgRoutes } from './http/routes/orgs/index.js'
 import { projectRoutes } from './http/routes/projects/index.js'
 import { prisma } from './lib/prisma.js'
@@ -52,6 +53,7 @@ await app.register(auth)
 await app.register(authRoutes)
 await app.register(orgRoutes)
 await app.register(projectRoutes)
+await app.register(memberRoutes)
 
 await app.register(fastifyCors, { origin: true })
 

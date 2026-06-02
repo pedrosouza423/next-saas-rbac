@@ -44,6 +44,9 @@ quando ler e quando atualizar:
 | [2026-05-29-api-bootstrap-infrastructure.md](specs/2026-05-29-api-bootstrap-infrastructure.md) | Implemented | [#10](https://github.com/pedrosouza423/next-saas-rbac/pull/10) |
 | [2026-05-29-api-auth-routes.md](specs/2026-05-29-api-auth-routes.md) | Implemented | [#22](https://github.com/pedrosouza423/next-saas-rbac/pull/22) |
 | [2026-05-31-api-oauth-github.md](specs/2026-05-31-api-oauth-github.md) | Implemented | [#12](https://github.com/pedrosouza423/next-saas-rbac/pull/12) |
+| [2026-06-01-api-organizations.md](specs/2026-06-01-api-organizations.md) | Implemented | [#13](https://github.com/pedrosouza423/next-saas-rbac/pull/13) |
+| [2026-06-01-api-projects.md](specs/2026-06-01-api-projects.md) | Implemented | [#14](https://github.com/pedrosouza423/next-saas-rbac/pull/14) |
+| [2026-06-02-api-members.md](specs/2026-06-02-api-members.md) | Implemented — `feat/api-members`, PR #15 | — |
 
 Template para novos specs: [specs/_template.md](specs/_template.md).
 
