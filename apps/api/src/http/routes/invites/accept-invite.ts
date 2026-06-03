@@ -47,16 +47,6 @@ const plugin: FastifyPluginAsyncZod = async (app) => {
         throw new ForbiddenError('This invite belongs to another email address.')
       }
 
-      const existingMember = await prisma.member.findFirst({
-        where: { userId, organizationId: invite.organizationId },
-      })
-
-      if (existingMember) {
-        throw new ConflictError(
-          'You are already a member of this organization.',
-        )
-      }
-
       try {
         await prisma.$transaction([
           prisma.member.create({
@@ -74,6 +64,9 @@ const plugin: FastifyPluginAsyncZod = async (app) => {
           throw new ConflictError(
             'You are already a member of this organization.',
           )
+        }
+        if (e?.code === 'P2025') {
+          throw new NotFoundError('Invite not found.')
         }
         throw err
       }
