@@ -29,7 +29,9 @@ const plugin: FastifyPluginAsyncZod = async (app) => {
 
       const ability = buildUserAbility(membership)
 
-      // Fast path: BILLING has no delete User permission at all
+      // Fast path: reject roles with no delete User rule at all (e.g. BILLING).
+      // Roles with a conditional rule (MEMBER: self-only) pass here and are
+      // checked against the target instance below via userCan.
       if (!ability.can('delete', 'User')) {
         throw new ForbiddenError('You are not allowed to remove this member.')
       }
