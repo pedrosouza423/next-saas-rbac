@@ -29,7 +29,7 @@ export function organizationCan(
 
 export function userCan(
   ability: AppAbility,
-  action: 'delete',
+  action: 'delete' | 'update',
   subject: User,
 ): boolean {
   return ability.can(action, subject)

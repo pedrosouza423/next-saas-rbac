@@ -36,13 +36,14 @@ const plugin: FastifyPluginAsyncZod = async (app) => {
 
       const targetMember = await prisma.member.findFirst({
         where: { id: memberId, organizationId: organization.id },
+        include: { organization: { select: { ownerId: true } } },
       })
 
       if (!targetMember) {
         throw new NotFoundError('Member not found.')
       }
 
-      if (targetMember.userId === organization.ownerId) {
+      if (targetMember.userId === targetMember.organization.ownerId) {
         throw new BadRequestError('You cannot remove the organization owner.')
       }
 

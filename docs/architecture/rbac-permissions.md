@@ -37,7 +37,7 @@ Aqui temos **5 subjects** e **3 roles**:
 
 | Action | Subject | ADMIN | MEMBER | BILLING |
 |---|---|---|---|---|
-| `get` | `User` | ✅ (via manage all) | ✅ | ❌ |
+| `get` | `User` | ✅ (via manage all) | ✅ | ❌ CASL / ✅ route¹ |
 | `invite` | `User` | ✅ (via manage all) | ✅ | ❌ |
 | `update` | `User` | ✅ (via manage all) | ❌ | ❌ |
 | `delete` | `User` | ✅ (via manage all) | 🔒 self (`id === user.id`) | ❌ |
@@ -55,6 +55,8 @@ Aqui temos **5 subjects** e **3 roles**:
 | `manage` | `Billing` | ✅ (via manage all) | ❌ | ✅ |
 | `get` | `Billing` | ✅ (via manage all) | ❌ | ✅ (via manage Billing) |
 | `export` | `Billing` | ✅ (via manage all) | ❌ | ✅ (via manage Billing) |
+
+¹ `GET /organizations/:slug/members` não faz ABAC check — ser membro da org (JWT membership) é suficiente para listar membros, então BILLING acessa o endpoint mesmo sem a ability `get User`. Comportamento intencional, consistente com `get-projects.ts` e org routes. O CASL ability `get User` de BILLING permanece ❌ (não definido em `permissions.ts`).
 
 ### Decisão de design: ADMIN usa `manage all` + cannot/can overrides
 

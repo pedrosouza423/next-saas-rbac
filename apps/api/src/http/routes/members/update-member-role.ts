@@ -1,3 +1,4 @@
+import { userCan, userSchema } from '@saas/auth'
 import fp from 'fastify-plugin'
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { z } from 'zod/v4'
@@ -38,14 +39,24 @@ const plugin: FastifyPluginAsyncZod = async (app) => {
 
       const targetMember = await prisma.member.findFirst({
         where: { id: memberId, organizationId: organization.id },
+        include: { organization: { select: { ownerId: true } } },
       })
 
       if (!targetMember) {
         throw new NotFoundError('Member not found.')
       }
 
-      if (targetMember.userId === organization.ownerId) {
+      if (targetMember.userId === targetMember.organization.ownerId) {
         throw new BadRequestError("You cannot change the organization owner's role.")
+      }
+
+      const targetUserSubject = userSchema.parse({
+        id: targetMember.userId,
+        role: targetMember.role,
+      })
+
+      if (!userCan(ability, 'update', targetUserSubject)) {
+        throw new ForbiddenError('You are not allowed to update this member.')
       }
 
       await prisma.member.update({
