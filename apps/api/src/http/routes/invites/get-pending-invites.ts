@@ -3,7 +3,7 @@ import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import { z } from 'zod/v4'
 
 import { prisma } from '../../../lib/prisma.js'
-import { ForbiddenError } from '../../errors/forbidden-error.js'
+import { getInviteRecipient } from '../../lib/get-invite-recipient.js'
 
 const plugin: FastifyPluginAsyncZod = async (app) => {
   app.get(
@@ -40,14 +40,7 @@ const plugin: FastifyPluginAsyncZod = async (app) => {
     async (request, reply) => {
       const userId = await request.getCurrentUserId()
 
-      const user = await prisma.user.findUnique({
-        where: { id: userId },
-        select: { email: true },
-      })
-
-      if (!user) {
-        throw new ForbiddenError('User not found.')
-      }
+      const user = await getInviteRecipient(userId)
 
       const invites = await prisma.invite.findMany({
         where: { email: user.email },

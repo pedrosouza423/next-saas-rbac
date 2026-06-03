@@ -6,6 +6,7 @@ import { prisma } from '../../../lib/prisma.js'
 import { ConflictError } from '../../errors/conflict-error.js'
 import { ForbiddenError } from '../../errors/forbidden-error.js'
 import { NotFoundError } from '../../errors/not-found-error.js'
+import { getInviteRecipient } from '../../lib/get-invite-recipient.js'
 
 const plugin: FastifyPluginAsyncZod = async (app) => {
   app.post(
@@ -25,15 +26,8 @@ const plugin: FastifyPluginAsyncZod = async (app) => {
       const userId = await request.getCurrentUserId()
       const { inviteId } = request.params
 
-      const user = await prisma.user.findUnique({
-        where: { id: userId },
-        select: { email: true },
-      })
-
       // JWT is valid so user must exist; guard against stale tokens after deletion
-      if (!user) {
-        throw new ForbiddenError('User not found.')
-      }
+      const user = await getInviteRecipient(userId)
 
       const invite = await prisma.invite.findUnique({
         where: { id: inviteId },
