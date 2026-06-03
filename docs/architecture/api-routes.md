@@ -1,6 +1,6 @@
 # Architecture — API Routes
 
-**Last updated:** 2026-06-01
+**Last updated:** 2026-06-02
 **Base URL:** `http://localhost:3333` (dev)
 **Swagger UI:** `http://localhost:3333/docs`
 
@@ -295,6 +295,61 @@ Veja [auth-flow.md](auth-flow.md) para os fluxos completos.
 
 // 404 — projeto não existe na org
 { "message": "Project not found." }
+```
+
+---
+
+### Members — `tags: ['members']`
+
+| Method | Path | Auth | Success | ABAC | Descrição |
+|--------|------|------|---------|------|-----------|
+| `GET` | `/organizations/:slug/members` | ✅ Bearer | `200` | membro | Listar membros da org |
+| `PUT` | `/organizations/:slug/members/:memberId` | ✅ Bearer | `204` | ADMIN | Atualizar role de membro |
+| `DELETE` | `/organizations/:slug/members/:memberId` | ✅ Bearer | `204` | ADMIN ou self | Remover membro |
+
+#### `GET /organizations/:slug/members`
+```json
+// 200
+{
+  "members": [
+    {
+      "id": "string",
+      "role": "ADMIN|MEMBER|BILLING",
+      "user": { "id": "string", "name": "string|null", "email": "string", "avatarUrl": "string|null" }
+    }
+  ]
+}
+```
+
+#### `PUT /organizations/:slug/members/:memberId`
+```json
+// Body
+{ "role": "ADMIN|MEMBER|BILLING" }
+
+// 204 — role atualizado
+
+// 400 — tentativa de alterar o role do owner
+{ "message": "You cannot change the organization owner's role." }
+
+// 403 — não é ADMIN
+{ "message": "You are not allowed to update this member." }
+
+// 404 — membro não existe na org
+{ "message": "Member not found." }
+```
+
+#### `DELETE /organizations/:slug/members/:memberId`
+```json
+// 204 — membro removido
+
+// 400 — tentativa de remover o owner
+{ "message": "You cannot remove the organization owner." }
+
+// 403 — não é ADMIN e não é self-remove
+{ "message": "You are not allowed to remove this member." }
+
+// 404 — membro não existe na org
+{ "message": "Member not found." }
 ```
 
 ---

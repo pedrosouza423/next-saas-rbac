@@ -37,10 +37,10 @@ Aqui temos **5 subjects** e **3 roles**:
 
 | Action | Subject | ADMIN | MEMBER | BILLING |
 |---|---|---|---|---|
-| `get` | `User` | ✅ (via manage all) | ✅ | ❌ |
+| `get` | `User` | ✅ (via manage all) | ✅ | ❌ CASL / ✅ route¹ |
 | `invite` | `User` | ✅ (via manage all) | ✅ | ❌ |
 | `update` | `User` | ✅ (via manage all) | ❌ | ❌ |
-| `delete` | `User` | ✅ (via manage all) | ❌ | ❌ |
+| `delete` | `User` | ✅ (via manage all) | 🔒 self (`id === user.id`) | ❌ |
 | `create` | `Organization` | ✅ (via manage all) | ❌ | ❌ |
 | `delete` | `Organization` | ✅ (via manage all) | ❌ | ❌ |
 | `update` | `Organization` | 🔒 owner | ❌ | ❌ |
@@ -55,6 +55,8 @@ Aqui temos **5 subjects** e **3 roles**:
 | `manage` | `Billing` | ✅ (via manage all) | ❌ | ✅ |
 | `get` | `Billing` | ✅ (via manage all) | ❌ | ✅ (via manage Billing) |
 | `export` | `Billing` | ✅ (via manage all) | ❌ | ✅ (via manage Billing) |
+
+¹ `GET /organizations/:slug/members` não faz ABAC check — ser membro da org (JWT membership) é suficiente para listar membros, então BILLING acessa o endpoint mesmo sem a ability `get User`. Comportamento intencional, consistente com `get-projects.ts` e org routes. O CASL ability `get User` de BILLING permanece ❌ (não definido em `permissions.ts`).
 
 ### Decisão de design: ADMIN usa `manage all` + cannot/can overrides
 
@@ -118,11 +120,12 @@ if (ability.can('update', { __typename: 'Project', ownerId: user.id })) {
 ### Typed wrappers for ownership-conditioned actions
 
 Use [`assert-can.ts`](../../packages/auth/src/assert-can.ts) quando precisar checar actions
-que possuem condições de ownership (`ownerId`). O módulo exporta dois helpers:
+que possuem condições de ownership. O módulo exporta três helpers:
 
 ```ts
 projectCan(ability, 'update' | 'delete', projectInstance)
 organizationCan(ability, 'update' | 'transfer_ownership', orgInstance)
+userCan(ability, 'delete', userInstance)
 ```
 
 **Por que existem:** CASL silenciosamente ignora condições (`ownerId: { $eq: user.id }`) quando
