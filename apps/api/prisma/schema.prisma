@@ -69,6 +69,7 @@ model Invite {
   role      Role
   createdAt DateTime @default(now()) @map("created_at")
 
+  // onDelete: SetNull — the invite survives when its author is deleted; authorId becomes null.
   author   User?   @relation(fields: [authorId], references: [id], onDelete: SetNull)
   authorId String? @map("author_id")
 
@@ -104,7 +105,8 @@ model Organization {
   createdAt                 DateTime @default(now()) @map("created_at")
   updatedAt                 DateTime @updatedAt @map("updated_at")
 
-  owner   User   @relation(fields: [ownerId], references: [id])
+  // onDelete: Restrict — an organization must always have an owner; transfer ownership before deleting the user.
+  owner   User   @relation(fields: [ownerId], references: [id], onDelete: Restrict)
   ownerId String @map("owner_id")
 
   invites  Invite[]
@@ -126,7 +128,8 @@ model Project {
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   organizationId String       @map("organization_id")
 
-  owner   User   @relation(fields: [ownerId], references: [id])
+  // onDelete: Restrict — deleting a user who owns projects is blocked; transfer or delete the projects first.
+  owner   User   @relation(fields: [ownerId], references: [id], onDelete: Restrict)
   ownerId String @map("owner_id")
 
   @@unique([slug, organizationId])
