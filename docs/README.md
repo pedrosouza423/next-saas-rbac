@@ -47,6 +47,7 @@ quando ler e quando atualizar:
 | [2026-06-01-api-organizations.md](specs/2026-06-01-api-organizations.md) | Implemented | [#13](https://github.com/pedrosouza423/next-saas-rbac/pull/13) |
 | [2026-06-01-api-projects.md](specs/2026-06-01-api-projects.md) | Implemented | [#14](https://github.com/pedrosouza423/next-saas-rbac/pull/14) |
 | [2026-06-02-api-members.md](specs/2026-06-02-api-members.md) | Implemented — `feat/api-members`, PR #15 | — |
+| [superpowers/specs/2026-06-04-api-billing-design.md](superpowers/specs/2026-06-04-api-billing-design.md) | Implemented — `feat/api-billing`, PR #17 | — |
 
 Template para novos specs: [specs/_template.md](specs/_template.md).
 
