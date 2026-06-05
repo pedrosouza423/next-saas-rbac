@@ -1,6 +1,6 @@
 # Architecture — API Routes
 
-**Last updated:** 2026-06-02
+**Last updated:** 2026-06-04
 **Base URL:** `http://localhost:3333` (dev)
 **Swagger UI:** `http://localhost:3333/docs`
 
@@ -350,6 +350,31 @@ Veja [auth-flow.md](auth-flow.md) para os fluxos completos.
 
 // 404 — membro não existe na org
 { "message": "Member not found." }
+```
+
+---
+
+### Billing — `tags: ['billing']`
+
+| Method | Path | Auth | Success | ABAC | Descrição |
+|--------|------|------|---------|------|-----------|
+| `GET` | `/organizations/:slug/billing` | ✅ Bearer | `200` | ADMIN, BILLING | Resumo de cobrança da org |
+
+#### `GET /organizations/:slug/billing`
+```json
+// 200
+{
+  "billing": {
+    "amountOfMembers": 3,
+    "amountOfProjects": 2,
+    "pricePerMember": 10,
+    "pricePerProject": 20,
+    "total": 70
+  }
+}
+
+// 403 — MEMBER não pode ver billing
+{ "message": "You are not allowed to get billing details from this organization." }
 ```
 
 ---
